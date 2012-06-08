@@ -4,17 +4,18 @@
   <!-- Forked from Jenkins warnings-plugin 4.6 -->
   
   <parent>
-    <groupId>org.eclipse.hudson.plugins</groupId>
+    <groupId>org.hudsonci.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.0-M2-1</version>
     <relativePath>../analysis-pom/pom.xml</relativePath>
   </parent>
 
+  <groupId>org.hudsonci.plugins</groupId>
   <artifactId>warnings</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Plug-in</name>
   <version>4.6-SNAPSHOT</version>
-  <url>http://wiki.jenkins-ci.org/x/G4CGAQ</url>
+  <url>https://wiki.hudson-ci.org/display/HUDSON/Warnings+Plugin</url>
   <description>This plug-in reads the compiler warnings from the
     console log file and generates a trend report.</description>
 
@@ -34,9 +35,13 @@
     </license>
   </licenses>
 
+  <properties>
+    <hudsonTags>recommended,report</hudsonTags>
+  </properties>
+
   <dependencies>
     <dependency>
-      <groupId>org.eclipse.hudson.plugins</groupId>
+      <groupId>org.hudsonci.plugins</groupId>
       <artifactId>analysis-core</artifactId>
       <version>1.42-SNAPSHOT</version>
     </dependency>
@@ -47,36 +52,26 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.hudson.plugins</groupId>
+      <groupId>org.hudsonci.plugins</groupId>
       <artifactId>violations</artifactId>
       <version>0.7.11-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
-    
+
     <!-- Expects groovy from Jenkins -->
+    
     <dependency>
-      <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy-all</artifactId>
-      <version>1.8.5</version>
+      <groupId>org.hudsonci.plugins</groupId>
+      <artifactId>groovy-support-plugin</artifactId>
+      <version>3.0.1-SNAPSHOT</version>
     </dependency>
-    <!--dependency><!- - groovy shell uses this but it doesn't declare this dependency - ->
-      <groupId>jline</groupId>
-      <artifactId>jline</artifactId>
-      <version>0.9.94</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency><!- - groovy shell uses this but it doesn't declare this dependency - ->
-      <groupId>org.fusesource.jansi</groupId>
-      <artifactId>jansi</artifactId>
-      <version>1.6</version>
-    </dependency-->
 
   </dependencies>
 
   <scm>
-    <connection>scm:git:git://github.com/hudson-plugins/${project.artifactId}-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:hudson-plugins/${project.artifactId}-plugin.git</developerConnection>
-    <url>https://github.com/hudson-plugins/${project.artifactId}-plugin</url>
+    <connection>scm:git:git://github.com/hudson3-plugins/${project.artifactId}-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:hudson3-plugins/${project.artifactId}-plugin.git</developerConnection>
+    <url>https://github.com/hudson3-plugins/${project.artifactId}-plugin</url>
   </scm>
 
 </project>  
