@@ -1,24 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
-  <!-- Forked from Jenkins warnings-plugin 4.6 -->
-  
   <parent>
     <groupId>org.hudsonci.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>3.0.0-M3</version>
-    <relativePath>../analysis-pom/pom.xml</relativePath>
+    <version>3.0.0</version>
+    <relativePath />
   </parent>
-
-  <groupId>org.hudsonci.plugins</groupId>
   <artifactId>warnings</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Plug-in</name>
-  <version>4.6-h-2-SNAPSHOT</version>
-  <url>https://wiki.hudson-ci.org/display/HUDSON/Warnings+Plugin</url>
+  <version>4.20-h-1-SNAPSHOT</version>
+  <url>http://wiki.hudson-ci.org/x/G4CGAQ</url>
   <description>This plug-in reads the compiler warnings from the
     console log file and generates a trend report.</description>
-
   <licenses>
     <license>
       <name>MIT license</name>
@@ -34,21 +29,16 @@
       <comments>All YUI source code is under the BSD license. Duke, the Java mascot also is under the BSD license.</comments>
     </license>
   </licenses>
-
-  <properties>
-    <hudsonTags>recommended,report</hudsonTags>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.hudsonci.plugins</groupId>
       <artifactId>analysis-core</artifactId>
-      <version>1.42-h-1</version>
+      <version>1.48-h-1</version>
     </dependency>
     <dependency>
-      <groupId>org.jvnet.hudson.plugins</groupId>
+      <groupId>org.hudsonci.plugins</groupId>
       <artifactId>analysis-test</artifactId>
-      <version>1.8</version>
+      <version>1.10-h-1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -57,22 +47,36 @@
       <version>0.7.11-h-1</version>
       <optional>true</optional>
     </dependency>
-
-    <!-- Expects groovy from Jenkins -->
-    
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.2</version>
+    </dependency>
     <dependency>
       <groupId>org.hudsonci.plugins</groupId>
       <artifactId>groovy-support-plugin</artifactId>
-      <version>3.0.1</version>
+      <version>3.0.3</version>
     </dependency>
-
   </dependencies>
-
   <scm>
-    <connection>scm:git:git://github.com/hudson3-plugins/${project.artifactId}-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:hudson3-plugins/${project.artifactId}-plugin.git</developerConnection>
-    <url>https://github.com/hudson3-plugins/${project.artifactId}-plugin</url>
+    <connection>scm:git:git://github.com/hudson3-plugins/warnings.git</connection>
+    <developerConnection>scm:git:git@github.com:hudson3-plugins/warnings.git</developerConnection>
+    <url>https://github.com/hudson3-plugins/warnings</url>
   </scm>
-
-</project>  
-
+  <repositories>
+    </repositories>
+  <groupId>org.hudsonci.plugins</groupId>
+  <developers>
+    <developer>
+      <id>bobfoster</id>
+      <name>Bob Foster</name>
+      <email>bobfoster@gmail.com</email>
+      <roles>
+        <role>Hudson Maintainer</role>
+      </roles>
+    </developer>
+  </developers>
+  <properties>
+    <hudsonTags>misc</hudsonTags>
+  </properties>
+</project>

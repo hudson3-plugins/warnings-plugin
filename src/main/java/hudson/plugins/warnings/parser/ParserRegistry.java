@@ -1,4 +1,4 @@
-package hudson.plugins.warnings.parser;
+package hudson.plugins.warnings.parser; // NOPMD
 
 import hudson.model.Hudson;
 import hudson.plugins.analysis.core.PluginDescriptor;
@@ -6,8 +6,9 @@ import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.plugins.analysis.util.NullLogger;
 import hudson.plugins.analysis.util.PluginLogger;
 import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.warnings.GroovyParser;
 import hudson.plugins.warnings.WarningsDescriptor;
+import hudson.plugins.warnings.GroovyParser;
+import hudson.util.ListBoxModel;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,6 +29,7 @@ import java.util.regex.Pattern;
 import javax.annotation.CheckForNull;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.collect.ImmutableList;
@@ -71,6 +73,19 @@ public class ParserRegistry {
                 parsers.add(new ParserAdapter(parser));
             }
         }
+    }
+
+    /**
+     * Returns the available parsers as a list model.
+     *
+     * @return the model of the list box
+     */
+    public static ListBoxModel getParsersAsListModel() {
+        ListBoxModel items = new ListBoxModel();
+        for (ParserDescription parser : getAvailableParsers()) {
+            items.add(parser.getName(), parser.getGroup());
+        }
+        return items;
     }
 
     /**
@@ -163,24 +178,14 @@ public class ParserRegistry {
     }
 
     /**
-     * Returns all parser names that identify at least one existing parser. The
-     * returned list is sorted alphabetically.
+     * Returns whether the specified parser exists.
      *
-     * @param parserNames
-     *            the names to filter
-     * @return the filtered set, containing only valid names
+     * @param parserName
+     *            the names to check for
+     * @return true if the parser exist, <code>false</code> otherwise
      */
-    public static List<String> filterExistingParserNames(final Set<String> parserNames) {
-        List<String> validNames = Lists.newArrayList();
-
-        for (String name : parserNames) {
-            if (!getParsers(name).isEmpty()) {
-                validNames.add(name);
-            }
-        }
-        Collections.sort(validNames);
-
-        return validNames;
+    public static boolean exists(final String parserName) {
+        return !getParsers(parserName).isEmpty();
     }
 
     /**
@@ -210,7 +215,7 @@ public class ParserRegistry {
         if (instance != null) {
             WarningsDescriptor descriptor = instance.getDescriptorByType(WarningsDescriptor.class);
             if (descriptor != null) {
-                return descriptor.getParsers();
+                return Lists.newArrayList(descriptor.getParsers());
             }
         }
         return Collections.emptyList();
@@ -406,7 +411,7 @@ public class ParserRegistry {
      * @return the reader
      */
     protected Reader createReader(final InputStream inputStream) {
-        return new InputStreamReader(inputStream, defaultCharset);
+        return new InputStreamReader(new BOMInputStream(inputStream), defaultCharset);
     }
 
     /**
@@ -430,5 +435,6 @@ public class ParserRegistry {
             return Collections.emptyList();
         }
     }
+
 }
 

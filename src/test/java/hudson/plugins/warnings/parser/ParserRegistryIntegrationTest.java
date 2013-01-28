@@ -9,15 +9,12 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 
 import org.junit.Test;
 import org.jvnet.hudson.test.HudsonTestCase;
 import org.jvnet.hudson.test.TestExtension;
 import org.jvnet.localizer.Localizable;
-
-import com.google.common.collect.Sets;
 
 /**
  * Tests the class {@link ParserRegistry} in context of a running Jenkins instance.
@@ -26,8 +23,7 @@ import com.google.common.collect.Sets;
  */
 public class ParserRegistryIntegrationTest extends HudsonTestCase {
     /** If you add a new parser then this value needs to be adapted. */
-    // FIXME - currently not picking up dynamic parsers
-    private static final int NUMBER_OF_AVAILABLE_PARSERS = 34; //41;
+    private static final int NUMBER_OF_AVAILABLE_PARSERS = 38; //43;
     private static final String OLD_ID_ECLIPSE_JAVA_COMPILER = "Eclipse Java Compiler";
     private static final String JAVA_WARNINGS_FILE = "deprecations.txt";
     private static final String OLD_ID_JAVA_COMPILER = "Java Compiler";
@@ -138,22 +134,6 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
     }
 
     /**
-     * Verifies that illegal names are filtered.
-     */
-    @Test
-    public void testFiltering() {
-        verifyFiltering(OLD_ID_JAVA_COMPILER);
-        verifyFiltering(Messages._Warnings_JavaParser_ParserName().toString(Locale.ENGLISH));
-    }
-
-    private void verifyFiltering(final String validName) {
-        List<String> filtered = ParserRegistry.filterExistingParserNames(Sets.newHashSet("Illegal", validName));
-
-        assertEquals("Wrong number of filteres elements", 1, filtered.size());
-        assertEquals("Wrong number of filteres elements", validName, filtered.get(0));
-    }
-
-    /**
      * Creates the registry under test.
      *
      * @param fileName
@@ -174,6 +154,7 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
         return parserRegistry;
     }
     // CHECKSTYLE:OFF Test implementations
+    @SuppressWarnings("javadoc")
     @TestExtension
     public static class TestBothParser extends RegexpLineParser {
         private static final Localizable DUMMY = Messages._Warnings_NotLocalizedName(MIXED_API);
@@ -190,6 +171,7 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
         }
 
     }
+    @SuppressWarnings("javadoc")
     @TestExtension
     public static class TestNewParser extends AbstractWarningsParser {
         private static final long serialVersionUID = 1L;
@@ -205,7 +187,7 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
             return null;
         }
     }
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"javadoc", "deprecation"})
     @TestExtension
     public static class TestOldParser implements WarningsParser {
         private static final long serialVersionUID = 1L;
@@ -217,11 +199,6 @@ public class ParserRegistryIntegrationTest extends HudsonTestCase {
         /** {@inheritDoc} */
         public String getName() {
             return OLD_API;
-        }
-
-        /** {@inheritDoc} */
-        public final int getLineNumber(final String lineNumber) {
-            return 0;
         }
     }
 }

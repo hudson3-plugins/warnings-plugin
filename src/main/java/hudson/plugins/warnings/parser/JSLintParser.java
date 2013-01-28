@@ -17,6 +17,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.util.ReaderInputStream;
+import org.kohsuke.stapler.framework.io.IOException2;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -57,10 +58,10 @@ public class JSLintParser extends AbstractWarningsParser {
             return warnings;
         }
         catch (SAXException exception) {
-            throw new IOException(exception);
+            throw new IOException2(exception);
         }
         catch (ParserConfigurationException exception) {
-            throw new IOException(exception);
+            throw new IOException2(exception);
         }
     }
 
@@ -114,7 +115,7 @@ public class JSLintParser extends AbstractWarningsParser {
                 }
 
                 int lineNumber = getLineNumber(atts.getValue("line"));
-                Warning warning = createWarning( fileName, lineNumber, category, message, priority);
+                Warning warning = createWarning(fileName, lineNumber, category, message, priority);
 
                 warnings.add(warning);
                 return;

@@ -8,6 +8,8 @@ import hudson.plugins.analysis.core.BuildResult;
 import hudson.plugins.warnings.parser.ParserRegistry;
 import hudson.plugins.warnings.parser.Warning;
 
+import java.io.File;
+
 import com.thoughtworks.xstream.XStream;
 
 /**
@@ -17,6 +19,9 @@ import com.thoughtworks.xstream.XStream;
  * @author Ulli Hafner
  */
 public class WarningsResult extends BuildResult {
+    private static final String FILENAME_SUFFIX = "-warnings.xml";
+    /** Version < 4.0 file name of warnings. */
+    static final String ORIGINAL_COMPILER_WARNINGS_XML = "compiler-warnings.xml";
     /** Unique identifier of this class. */
     private static final long serialVersionUID = -137460587767210579L;
     /** The group of the parser. @since 4.0 */
@@ -38,12 +43,12 @@ public class WarningsResult extends BuildResult {
      */
     public WarningsResult(final AbstractBuild<?, ?> build, final BuildHistory history,
             final ParserResult result, final String defaultEncoding, final String group) {
-        this(build, history, result, defaultEncoding, group, true);
+        this(build, history, result, defaultEncoding, group, group == null ? false : true);
     }
 
     WarningsResult(final AbstractBuild<?, ?> build, final BuildHistory history,
-            final ParserResult result, final String defaultEncoding, final String group,
-            final boolean canSerialize) {
+            final ParserResult result, final String defaultEncoding,
+            final String group, final boolean canSerialize) {
         super(build, history, result, defaultEncoding);
 
         this.group = group;
@@ -54,7 +59,7 @@ public class WarningsResult extends BuildResult {
 
     @Override
     protected BuildHistory createHistory(final AbstractBuild<?, ?> build) {
-        return new WarningsBuildHistory(build, group);
+        return new WarningsBuildHistory(build, group, false);
     }
 
     @Override
@@ -84,12 +89,27 @@ public class WarningsResult extends BuildResult {
 
     @Override
     protected String getSerializationFileName() {
-        if (group == null) { // prior 4.0
-            return "compiler-warnings.xml";
+        FileChecker fileChecker = new FileChecker(getOwner().getRootDir());
+
+        return getFileName(fileChecker, group == null ? 0 : ParserRegistry.getUrl(group));
+    }
+
+    String getFileName(final FileChecker fileChecker, final int groupUrl) {
+        String fileName = ORIGINAL_COMPILER_WARNINGS_XML;
+        if (fileChecker.canRead(fileName)) {
+            return fileName;
         }
-        else {
-            return "compiler-" + ParserRegistry.getUrl(group) + "-warnings.xml";
+
+        fileName = createFileName(groupUrl);
+        if (fileChecker.canRead(fileName)) {
+            return fileName;
         }
+
+        return group.replaceAll("\\W+", "") + FILENAME_SUFFIX;
+    }
+
+    String createFileName(final int groupUrl) {
+        return "compiler-" + groupUrl + FILENAME_SUFFIX;
     }
 
     /** {@inheritDoc} */
@@ -105,5 +125,22 @@ public class WarningsResult extends BuildResult {
     @Override
     protected Class<? extends ResultAction<? extends BuildResult>> getResultActionType() {
         return WarningsResultAction.class;
+    }
+
+    /**
+     * Provides a way to hide file system access during testing.
+     *
+     * @author Ulli Hafner
+     */
+    static class FileChecker {
+        private final File root;
+
+        FileChecker(final File root) {
+            this.root = root;
+        }
+
+        boolean canRead(final String fileName) {
+            return new File(root, fileName).canRead();
+        }
     }
 }
