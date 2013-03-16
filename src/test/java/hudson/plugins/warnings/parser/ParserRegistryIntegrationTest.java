@@ -17,7 +17,7 @@ import org.jvnet.hudson.test.TestExtension;
 import org.jvnet.localizer.Localizable;
 
 /**
- * Tests the class {@link ParserRegistry} in context of a running Jenkins instance.
+ * Tests the class {@link ParserRegistry} in context of a running Hudson instance.
  *
  * @author Ulli Hafner
  */

@@ -225,16 +225,7 @@ public class ParserRegistry {
         List<AbstractWarningsParser> parsers = Lists.newArrayList();
         for (GroovyParser description : parserDescriptions) {
             if (description.isValid()) {
-                AbstractWarningsParser parser;
-                if (description.hasMultiLineSupport()) {
-                    parser = new DynamicDocumentParser(description.getName(), description.getRegexp(), description.getScript(),
-                            description.getLinkName(), description.getTrendName());
-                }
-                else {
-                    parser = new DynamicParser(description.getName(), description.getRegexp(), description.getScript(),
-                            description.getLinkName(), description.getTrendName());
-                }
-                parsers.add(parser);
+                parsers.add(description.getParser());
             }
         }
         return parsers;

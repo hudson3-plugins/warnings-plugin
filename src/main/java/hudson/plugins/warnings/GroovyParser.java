@@ -5,6 +5,9 @@ import groovy.lang.GroovyShell;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.plugins.warnings.parser.AbstractWarningsParser;
+import hudson.plugins.warnings.parser.DynamicDocumentParser;
+import hudson.plugins.warnings.parser.DynamicParser;
 import hudson.plugins.warnings.parser.Warning;
 import hudson.util.FormValidation;
 import hudson.util.FormValidation.Kind;
@@ -13,6 +16,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
@@ -35,6 +40,8 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
     private String linkName;
     /** Trend report name. @since 4.0 */
     private String trendName;
+    @CheckForNull
+    private transient AbstractWarningsParser parser;
 
     /**
      * Creates a new instance of {@link GroovyParser}.
@@ -63,6 +70,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
         this.example = example;
         this.linkName = linkName;
         this.trendName = trendName;
+        parser = createParser();
     }
 
     /**
@@ -91,7 +99,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
         if (trendName == null) {
             trendName = Messages._Warnings_Trend_Name().toString(Locale.ENGLISH);
         }
-
+        parser = createParser();
         return this;
     }
 
@@ -102,6 +110,10 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
      *         otherwise
      */
     public boolean isValid() {
+        return parser != null;
+    }
+
+    private boolean canCreateParser() {
         DescriptorImpl d = new DescriptorImpl();
         return d.doCheckScript(script).kind == FormValidation.Kind.OK
                 && d.doCheckRegexp(regexp).kind == FormValidation.Kind.OK
@@ -169,12 +181,37 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
      * @return <code>true</code> if the parser can scan messages spanning
      *         multiple lines
      */
-    public boolean hasMultiLineSupport() {
+    public final boolean hasMultiLineSupport() {
         return containsNewline(regexp);
     }
 
     private static boolean containsNewline(final String expression) {
         return StringUtils.contains(expression, "\\n");
+    }
+
+    @CheckForNull
+    private AbstractWarningsParser createParser() {
+        if (canCreateParser()) {
+            if (hasMultiLineSupport()) {
+                return new DynamicDocumentParser(name, regexp, script, linkName, trendName);
+            }
+            else {
+                return new DynamicParser(name, regexp, script, linkName, trendName);
+            }
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns a valid parser instance. If this parsers configuration is not valid, then <code>null</code> is returned.
+     *
+     * @return a valid parser instance or <code>null</code> if this parsers configuration is not valid.
+     */
+    @CheckForNull
+    public AbstractWarningsParser getParser() {
+        return parser;
     }
 
     /**
